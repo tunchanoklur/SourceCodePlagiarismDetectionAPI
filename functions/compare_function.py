@@ -9,7 +9,6 @@ import os
 sys.path.extend(['.', '..'])
 
 from pycparser import c_parser, c_ast, c_generator
-
 class FileInfo:
     def __init__(self, name, data, ast = None):
         self.name = name
@@ -44,14 +43,12 @@ def commentRemover(text):
     )
     return re.sub(pattern, replacer, text)
 
-def file_reader(directory):
+def file_reader(data):
     filelist = []
-    for filename in os.listdir(directory):
-        if filename.endswith(".c"):
-            path = (directory + '/' + filename)
-            file = open(path,'r')
-            file_data = commentRemover(file.read())
-            filelist.append(FileInfo(filename,file_data))
+    for datafile in data:
+        file_data = commentRemover(datafile['fileinfo'])
+        print(file_data)
+        filelist.append(FileInfo(datafile['filename'],file_data))
     return filelist
 
 def remove_preprocessor_directive(code):
@@ -162,12 +159,11 @@ def print_dic(ast_dictionary):
        else:
            print("\t",ast_dictionary[dic])
 
-#main function
-def getsimscore(directory):
+def getsimscore(data_in):
     parser = c_parser.CParser()
     
     ast_dictionary = []
-    filelist = file_reader(directory)
+    filelist = file_reader(data_in)
     for file in filelist:
         file.ast = parser.parse(file.data, filename=file.name)
         recursive_postordertraversal(file.ast,0)
@@ -193,22 +189,23 @@ def getsimscore(directory):
             result_matrix[j,i] = tmp
             if i>j:
                 result_matrix[i,j] = None
-        
-    result_df = pandas.DataFrame(result_matrix, [file.name for file in filelist], [file.name for file in filelist])
-    result_df.fillna("", inplace = True) 
-    result_df.to_csv(directory+'/_evaluation_result.csv', index = True, header=True)
+
+    return result_matrix
+    #result_df = pandas.DataFrame(result_matrix, [file.name for file in filelist], [file.name for file in filelist])
+    #result_df.fillna("", inplace = True) 
+    #result_df.to_csv(directory+'/_evaluation_result.csv', index = True, header=True)
     
-    loc_df = pandas.DataFrame(loc_matrix, [file.name for file in filelist], [file.name for file in filelist])
-    loc_df.fillna("", inplace = True) 
-    loc_df.to_csv(directory+'/_loc_result.csv', index = True, header=True)
+    #loc_df = pandas.DataFrame(loc_matrix, [file.name for file in filelist], [file.name for file in filelist])
+    #loc_df.fillna("", inplace = True) 
+    #loc_df.to_csv(directory+'/_loc_result.csv', index = True, header=True)
 
-directory = 'C:/Users/hitsu/Desktop/senior project/'
-sub_dir = ['Prototype']
+#directory = 'C:/Users/hitsu/Desktop/senior project/'
+#sub_dir = ['Prototype']
 
-import time
-start_time = time.time()
-for subdir in sub_dir:
-    print(directory+subdir)
-    getsimscore(directory+subdir)
-    print("DONE")
-print("--- %s seconds ---" % (time.time() - start_time))
+#import time
+#start_time = time.time()
+#for subdir in sub_dir:
+    #print(directory+subdir)
+    #getsimscore(directory+subdir)
+    #print("DONE")
+#print("--- %s seconds ---" % (time.time() - start_time))

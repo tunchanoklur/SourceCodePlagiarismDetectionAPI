@@ -165,14 +165,15 @@ class NodeVisitor(object):
             self.visit(c)
 
 class ArrayDecl(Node):
-    __slots__ = ('type', 'dim', 'dim_quals', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, type, dim, dim_quals, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('type', 'dim', 'dim_quals', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, type, dim, dim_quals, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.type = type
         self.dim = dim
         self.dim_quals = dim_quals
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -186,16 +187,17 @@ class ArrayDecl(Node):
         if self.dim is not None:
             yield self.dim
 
-    attr_names = ('dim_quals', 'self_hash', 'recur_hash', )
+    attr_names = ('dim_quals', 'self_hash', 'recur_hash', 'weight', )
 
 class ArrayRef(Node):
-    __slots__ = ('name', 'subscript', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, subscript, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'subscript', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, subscript, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.subscript = subscript
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -209,17 +211,18 @@ class ArrayRef(Node):
         if self.subscript is not None:
             yield self.subscript
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Assignment(Node):
-    __slots__ = ('op', 'lvalue', 'rvalue', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, op, lvalue, rvalue, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('op', 'lvalue', 'rvalue', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, op, lvalue, rvalue, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.op = op
         self.lvalue = lvalue
         self.rvalue = rvalue
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -233,17 +236,18 @@ class Assignment(Node):
         if self.rvalue is not None:
             yield self.rvalue
 
-    attr_names = ('op', 'self_hash', 'recur_hash', )
+    attr_names = ('op', 'self_hash', 'recur_hash', 'weight', )
 
 class BinaryOp(Node):
-    __slots__ = ('op', 'left', 'right', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, op, left, right, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('op', 'left', 'right', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, op, left, right, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.op = op
         self.left = left
         self.right = right
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -257,14 +261,15 @@ class BinaryOp(Node):
         if self.right is not None:
             yield self.right
 
-    attr_names = ('op', 'self_hash', 'recur_hash', )
+    attr_names = ('op', 'self_hash', 'recur_hash', 'weight', )
 
 class Break(Node):
-    __slots__ = ( 'coord','self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -274,16 +279,17 @@ class Break(Node):
         return
         yield
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Case(Node):
-    __slots__ = ('expr', 'stmts', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, expr, stmts, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('expr', 'stmts', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, expr, stmts, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.expr = expr
         self.stmts = stmts
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -298,16 +304,17 @@ class Case(Node):
         for child in (self.stmts or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Cast(Node):
-    __slots__ = ('to_type', 'expr', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, to_type, expr, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('to_type', 'expr', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, to_type, expr, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.to_type = to_type
         self.expr = expr
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -321,15 +328,16 @@ class Cast(Node):
         if self.expr is not None:
             yield self.expr
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Compound(Node):
-    __slots__ = ('block_items', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, block_items, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('block_items', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, block_items, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.block_items = block_items
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -341,16 +349,17 @@ class Compound(Node):
         for child in (self.block_items or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class CompoundLiteral(Node):
-    __slots__ = ('type', 'init', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, type, init, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('type', 'init', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, type, init, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.type = type
         self.init = init
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -364,16 +373,17 @@ class CompoundLiteral(Node):
         if self.init is not None:
             yield self.init
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Constant(Node):
-    __slots__ = ('type', 'value', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, type, value, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('type', 'value', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, type, value, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.type = type
         self.value = value
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -383,14 +393,15 @@ class Constant(Node):
         return
         yield
 
-    attr_names = ('type', 'value', 'self_hash', 'recur_hash', )
+    attr_names = ('type', 'value', 'self_hash', 'recur_hash', 'weight', )
 
 class Continue(Node):
-    __slots__ = ('coord','self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -400,11 +411,11 @@ class Continue(Node):
         return
         yield
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Decl(Node):
-    __slots__ = ('name', 'quals', 'storage', 'funcspec', 'type', 'init', 'bitsize', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, quals, storage, funcspec, type, init, bitsize, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'quals', 'storage', 'funcspec', 'type', 'init', 'bitsize', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, quals, storage, funcspec, type, init, bitsize, coord=None,self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.quals = quals
         self.storage = storage
@@ -415,6 +426,7 @@ class Decl(Node):
         self.init = init
         self.bitsize = bitsize
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -431,15 +443,16 @@ class Decl(Node):
         if self.bitsize is not None:
             yield self.bitsize
 
-    attr_names = ('name', 'quals', 'storage', 'funcspec', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'quals', 'storage', 'funcspec', 'self_hash', 'recur_hash', 'weight', )
 
 class DeclList(Node):
-    __slots__ = ('decls', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, decls, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ( 'decls', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, decls, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.decls = decls
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -451,15 +464,16 @@ class DeclList(Node):
         for child in (self.decls or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Default(Node):
-    __slots__ = ('stmts', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, stmts, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('stmts', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, stmts, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.stmts = stmts
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -471,16 +485,17 @@ class Default(Node):
         for child in (self.stmts or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class DoWhile(Node):
-    __slots__ = ( 'cond', 'stmt', 'coord','self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, cond, stmt, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('cond', 'stmt', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, cond, stmt, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.cond = cond
         self.stmt = stmt
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -494,14 +509,15 @@ class DoWhile(Node):
         if self.stmt is not None:
             yield self.stmt
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class EllipsisParam(Node):
-    __slots__ = ('coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ( 'coord', 'self_hash', 'recur_hash', 'weight','__weakref__')
+    def __init__(self, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -511,14 +527,15 @@ class EllipsisParam(Node):
         return
         yield
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class EmptyStatement(Node):
-    __slots__ = ('coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -528,16 +545,17 @@ class EmptyStatement(Node):
         return
         yield
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Enum(Node):
-    __slots__ = ('name', 'values', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, values, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'values', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, values, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.values = values
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -548,16 +566,17 @@ class Enum(Node):
         if self.values is not None:
             yield self.values
 
-    attr_names = ('name', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'self_hash', 'recur_hash', 'weight', )
 
 class Enumerator(Node):
-    __slots__ = ('name', 'value', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, value, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'value', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, value, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.value = value
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -568,15 +587,16 @@ class Enumerator(Node):
         if self.value is not None:
             yield self.value
 
-    attr_names = ('name', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'self_hash', 'recur_hash', 'weight', )
 
 class EnumeratorList(Node):
-    __slots__ = ('enumerators', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, enumerators, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ( 'enumerators', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, enumerators, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.enumerators = enumerators
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -588,15 +608,16 @@ class EnumeratorList(Node):
         for child in (self.enumerators or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class ExprList(Node):
-    __slots__ = ('exprs', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, exprs, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('exprs', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, exprs, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.exprs = exprs
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -608,15 +629,16 @@ class ExprList(Node):
         for child in (self.exprs or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class FileAST(Node):
-    __slots__ = ('ext', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, ext, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('ext', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, ext, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.ext = ext
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -628,11 +650,11 @@ class FileAST(Node):
         for child in (self.ext or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class For(Node):
-    __slots__ = ('init', 'cond', 'next', 'stmt', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, init, cond, next, stmt, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('init', 'cond', 'next', 'stmt', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, init, cond, next, stmt, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.init = init
@@ -640,6 +662,7 @@ class For(Node):
         self.next = next
         self.stmt = stmt
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -659,16 +682,17 @@ class For(Node):
         if self.stmt is not None:
             yield self.stmt
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class FuncCall(Node):
-    __slots__ = ('name', 'args', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, args, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'args', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, args, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.name = name
         self.args = args
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -682,16 +706,17 @@ class FuncCall(Node):
         if self.args is not None:
             yield self.args
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class FuncDecl(Node):
-    __slots__ = ('args', 'type', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, args, type, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('args', 'type', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, args, type, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.args = args
         self.type = type
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -705,17 +730,18 @@ class FuncDecl(Node):
         if self.type is not None:
             yield self.type
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class FuncDef(Node):
-    __slots__ = ('decl', 'param_decls', 'body', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, decl, param_decls, body, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('decl', 'param_decls', 'body', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, decl, param_decls, body, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.decl = decl
         self.param_decls = param_decls
         self.body = body
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -733,15 +759,16 @@ class FuncDef(Node):
         for child in (self.param_decls or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Goto(Node):
-    __slots__ = ('name', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -751,15 +778,16 @@ class Goto(Node):
         return
         yield
 
-    attr_names = ('name', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'self_hash', 'recur_hash', 'weight', )
 
 class ID(Node):
-    __slots__ = ('name', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -769,15 +797,16 @@ class ID(Node):
         return
         yield
 
-    attr_names = ('name', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'self_hash', 'recur_hash', 'weight', )
 
 class IdentifierType(Node):
-    __slots__ = ('names', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, names, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('names', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, names, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.names = names
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -787,17 +816,18 @@ class IdentifierType(Node):
         return
         yield
 
-    attr_names = ('names', 'self_hash', 'recur_hash', )
+    attr_names = ('names', 'self_hash', 'recur_hash', 'weight', )
 
 class If(Node):
-    __slots__ = ('cond', 'iftrue', 'iffalse', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, cond, iftrue, iffalse, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('cond', 'iftrue', 'iffalse', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, cond, iftrue, iffalse, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.cond = cond
         self.iftrue = iftrue
         self.iffalse = iffalse
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -814,15 +844,16 @@ class If(Node):
         if self.iffalse is not None:
             yield self.iffalse
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class InitList(Node):
-    __slots__ = ('exprs', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, exprs, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('exprs', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, exprs, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.exprs = exprs
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -834,16 +865,17 @@ class InitList(Node):
         for child in (self.exprs or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Label(Node):
-    __slots__ = ('name', 'stmt', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, stmt, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'stmt', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, stmt, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.stmt = stmt
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -854,16 +886,17 @@ class Label(Node):
         if self.stmt is not None:
             yield self.stmt
 
-    attr_names = ('name', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'self_hash', 'recur_hash', 'weight', )
 
 class NamedInitializer(Node):
-    __slots__ = ('name', 'expr', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, expr, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'expr', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, expr, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.name = name
         self.expr = expr
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -878,15 +911,16 @@ class NamedInitializer(Node):
         for child in (self.name or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class ParamList(Node):
-    __slots__ = ('params', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, params, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('params', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, params, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.params = params
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -898,16 +932,17 @@ class ParamList(Node):
         for child in (self.params or []):
             yield child
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class PtrDecl(Node):
-    __slots__ = ('quals', 'type', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, quals, type, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('quals', 'type', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, quals, type, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.quals = quals
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.type = type
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -918,15 +953,16 @@ class PtrDecl(Node):
         if self.type is not None:
             yield self.type
 
-    attr_names = ('quals', 'self_hash', 'recur_hash', )
+    attr_names = ('quals', 'self_hash', 'recur_hash', 'weight', )
 
 class Return(Node):
-    __slots__ = ('expr', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, expr, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('expr', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, expr, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.expr = expr
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -937,16 +973,17 @@ class Return(Node):
         if self.expr is not None:
             yield self.expr
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Struct(Node):
-    __slots__ = ('name', 'decls', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, decls, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'decls', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, decls, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.decls = decls
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -958,17 +995,18 @@ class Struct(Node):
         for child in (self.decls or []):
             yield child
 
-    attr_names = ('name', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'self_hash', 'recur_hash', 'weight', )
 
 class StructRef(Node):
-    __slots__ = ('name', 'type', 'field', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, type, field, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'type', 'field', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, type, field, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.type = type
         self.field = field
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -982,16 +1020,17 @@ class StructRef(Node):
         if self.field is not None:
             yield self.field
 
-    attr_names = ('type', 'self_hash', 'recur_hash', )
+    attr_names = ('type', 'self_hash', 'recur_hash', 'weight', )
 
 class Switch(Node):
-    __slots__ = ('cond', 'stmt', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, cond, stmt, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('cond', 'stmt', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, cond, stmt, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.cond = cond
         self.stmt = stmt
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1005,17 +1044,18 @@ class Switch(Node):
         if self.stmt is not None:
             yield self.stmt
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class TernaryOp(Node):
-    __slots__ = ('cond', 'iftrue', 'iffalse', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, cond, iftrue, iffalse, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('cond', 'iftrue', 'iffalse', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, cond, iftrue, iffalse, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.cond = cond
         self.iftrue = iftrue
         self.iffalse = iffalse
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1032,17 +1072,18 @@ class TernaryOp(Node):
         if self.iffalse is not None:
             yield self.iffalse
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class TypeDecl(Node):
-    __slots__ = ('declname', 'quals', 'type', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, declname, quals, type, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('declname', 'quals', 'type', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, declname, quals, type, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.declname = declname
         self.quals = quals
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.type = type
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1053,11 +1094,11 @@ class TypeDecl(Node):
         if self.type is not None:
             yield self.type
 
-    attr_names = ('declname', 'quals', 'self_hash', 'recur_hash', )
+    attr_names = ('declname', 'quals', 'self_hash', 'recur_hash', 'weight', )
 
 class Typedef(Node):
-    __slots__ = ('name', 'quals', 'storage', 'type', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, quals, storage, type, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'quals', 'storage', 'type', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, quals, storage, type, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.quals = quals
         self.storage = storage
@@ -1065,6 +1106,7 @@ class Typedef(Node):
         self.recur_hash = recur_hash
         self.type = type
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1075,17 +1117,18 @@ class Typedef(Node):
         if self.type is not None:
             yield self.type
 
-    attr_names = ('name', 'quals', 'storage', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'quals', 'storage', 'self_hash', 'recur_hash', 'weight', )
 
 class Typename(Node):
-    __slots__ = ('name', 'quals', 'type', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, quals, type, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'quals', 'type', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, quals, type, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.quals = quals
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.type = type
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1096,16 +1139,17 @@ class Typename(Node):
         if self.type is not None:
             yield self.type
 
-    attr_names = ('name', 'quals', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'quals', 'self_hash', 'recur_hash', 'weight', )
 
 class UnaryOp(Node):
-    __slots__ = ('op', 'expr', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, op, expr, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('op', 'expr', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, op, expr, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.op = op
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.expr = expr
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1116,16 +1160,17 @@ class UnaryOp(Node):
         if self.expr is not None:
             yield self.expr
 
-    attr_names = ('op', 'self_hash', 'recur_hash', )
+    attr_names = ('op', 'self_hash', 'recur_hash', 'weight', )
 
 class Union(Node):
-    __slots__ = ('name', 'decls', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, name, decls, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('name', 'decls', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, name, decls, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.name = name
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.decls = decls
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1137,16 +1182,17 @@ class Union(Node):
         for child in (self.decls or []):
             yield child
 
-    attr_names = ('name', 'self_hash', 'recur_hash', )
+    attr_names = ('name', 'self_hash', 'recur_hash', 'weight', )
 
 class While(Node):
-    __slots__ = ('cond', 'stmt', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, cond, stmt, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('cond', 'stmt', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, cond, stmt, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.cond = cond
         self.stmt = stmt
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1160,15 +1206,16 @@ class While(Node):
         if self.stmt is not None:
             yield self.stmt
 
-    attr_names = ('self_hash', 'recur_hash', )
+    attr_names = ('self_hash', 'recur_hash', 'weight', )
 
 class Pragma(Node):
-    __slots__ = ('string', 'coord', 'self_hash', 'recur_hash', '__weakref__')
-    def __init__(self, string, coord=None, self_hash = None, recur_hash = None):
+    __slots__ = ('string', 'coord', 'self_hash', 'recur_hash', 'weight', '__weakref__')
+    def __init__(self, string, coord=None, self_hash = None, recur_hash = None, weight = 1):
         self.string = string
         self.self_hash = self_hash
         self.recur_hash = recur_hash
         self.coord = coord
+        self.weight = weight
 
     def children(self):
         nodelist = []
@@ -1178,5 +1225,5 @@ class Pragma(Node):
         return
         yield
 
-    attr_names = ('string', 'self_hash', 'recur_hash', )
+    attr_names = ('string', 'self_hash', 'recur_hash', 'weight', )
 
