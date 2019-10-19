@@ -1,0 +1,16 @@
+
+
+int main(void){
+	int a=5,b=10,c;
+	c = a * b;
+	c+=c;
+	for(int i = 0;i<10;i++){
+        printf("%d",i);
+	}
+	int j=0;
+    do{
+      j++;
+      printf("%d\n",j);
+    }while(j<10);
+	return 0;
+}
