@@ -48,7 +48,7 @@ def file_reader(data):
     for datafile in data:
         file_data = commentRemover(datafile['fileinfo'])
         print(file_data)
-        filelist.append(FileInfo(datafile['filename'],file_data))
+        filelist.append(FileInfo(datafile['filename'],file_data.replace('\r\n','\n')))
     return filelist
 
 def remove_preprocessor_directive(code):
@@ -188,24 +188,11 @@ def getsimscore(data_in):
             result_matrix[i,j] = tmp
             result_matrix[j,i] = tmp
             if i>j:
-                result_matrix[i,j] = None
+                result_matrix[i,j] = 1000
 
-    return result_matrix
-    #result_df = pandas.DataFrame(result_matrix, [file.name for file in filelist], [file.name for file in filelist])
-    #result_df.fillna("", inplace = True) 
-    #result_df.to_csv(directory+'/_evaluation_result.csv', index = True, header=True)
-    
-    #loc_df = pandas.DataFrame(loc_matrix, [file.name for file in filelist], [file.name for file in filelist])
-    #loc_df.fillna("", inplace = True) 
-    #loc_df.to_csv(directory+'/_loc_result.csv', index = True, header=True)
-
-#directory = 'C:/Users/hitsu/Desktop/senior project/'
-#sub_dir = ['Prototype']
-
-#import time
-#start_time = time.time()
-#for subdir in sub_dir:
-    #print(directory+subdir)
-    #getsimscore(directory+subdir)
-    #print("DONE")
-#print("--- %s seconds ---" % (time.time() - start_time))
+    return {
+        "score": result_matrix.tolist(),
+        "loc": loc_matrix.tolist(),
+        "filelist_name": [file.name for file in filelist],
+        "filelist_data": [file.data for file in filelist]
+    }
