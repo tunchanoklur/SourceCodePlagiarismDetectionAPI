@@ -6,6 +6,7 @@ import numpy as np
 import pandas
 import re
 import os
+from io import StringIO
 sys.path.extend(['.', '..'])
 
 from pycparser import c_parser, c_ast, c_generator
@@ -196,3 +197,40 @@ def getsimscore(data_in):
         "filelist_name": [file.name for file in filelist],
         "filelist_data": [file.data for file in filelist]
     }
+
+def getsimscore_CSV(data_in):
+    parser = c_parser.CParser()
+    
+    ast_dictionary = []
+    filelist = file_reader(data_in)
+    for file in filelist:
+        file.ast = parser.parse(file.data, filename=file.name)
+        recursive_postordertraversal(file.ast,0)
+        ast_dictionary.append(generate_dic(file.ast))
+    
+    total_file = len(filelist)
+    result_matrix = np.zeros((total_file, total_file))
+    loc_matrix = np.empty((total_file, total_file),dtype=object)
+    
+    for i in range(total_file):
+        tree1 = filelist[i]
+        for j in range(total_file):
+            tmp_dic1 = ast_dictionary[i].copy()
+            tmp_dic2 = ast_dictionary[j].copy()
+            loc_matrix[i,j] = []
+            result_matrix[i,j] = (compare_bfs(tmp_dic1,tmp_dic2,loc_matrix[i,j])/tree1.ast.weight)*100
+            result_matrix[i,j] = round(result_matrix[i,j], 2)
+        
+    for i in range(total_file):
+        for j in range(total_file):
+            tmp = round((result_matrix[i,j] + result_matrix[j,i])/2, 2)
+            result_matrix[i,j] = tmp
+            result_matrix[j,i] = tmp
+            if i>j:
+                result_matrix[i,j] = None
+    result_df = pandas.DataFrame(result_matrix, [file.name for file in filelist], [file.name for file in filelist])
+    result_df.fillna("", inplace = True)
+    stream = StringIO()
+    result_df.to_csv(stream, index = True, header=True)
+    
+    return stream.getvalue()
