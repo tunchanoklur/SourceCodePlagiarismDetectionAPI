@@ -52,17 +52,6 @@ def file_reader(data):
         filelist.append(FileInfo(datafile['filename'],file_data.replace('\r\n','\n')))
     return filelist
 
-def remove_preprocessor_directive(code):
-    preprocessor_directive=['#include','#define','#undef','#ifdef','#ifndef','#if','#else','#elif','#endif','#error','#pragma']
-    codelist = code.split('\n')
-    codelist = [line for line in codelist if not any(re.findall(r'|'.join(preprocessor_directive), line, re.IGNORECASE))]
-    code = '\n'.join(codelist)
-    return code
-
-def print_tab(times):
-    for i in range(times):
-        print('\t', end = '')
-
 def categorize_binop(operator):
     if operator in ['*','%','/']:
         return "multiplicative"
@@ -100,7 +89,7 @@ def compare_bfs(ast1,ast2,loc_list):
     tree2 = ast2
     for node2_tuple in sorted(tree2.items(), key = lambda x: x[1].weight, reverse=True):
         node2 = node2_tuple[0]
-        if node2 in list(tree1):
+        if node2 in tree1:
             if tree1[node2].weight == tree2[node2].weight:
                 similar_node += recur_dic(node2,tree1,tree2,similar_node,loc_list,"first")
     return similar_node
@@ -120,13 +109,6 @@ def recur_dic(node,dic1,dic2,similar=0,loc_list=[],times="others"):
         return tmp.weight*tmp.times
     else:
         return similar
-    
-def bfs(bfs_queue,node_no):
-    if len(bfs_queue)!=0:
-        tmp = bfs_queue.pop(0)
-        for n in tmp.children():
-            bfs_queue.append(n[1])
-        bfs(bfs_queue,node_no+1)
 
 def generate_dic(ast):
     dic = {}
@@ -151,15 +133,6 @@ def generate_dic(ast):
                 dic[tmp.recur_hash].adj_list.append(n[1].recur_hash)
     return dic
 
-def print_dic(ast_dictionary):
-    for dic in ast_dictionary:
-       print(dic,"\t", ast_dictionary[dic].weight)
-       if isinstance(ast_dictionary[dic], list):
-           for data in ast_dictionary[dic]:
-               print("\t",data)
-       else:
-           print("\t",ast_dictionary[dic])
-
 def getsimscore(data_in):
     parser = c_parser.CParser()
     
@@ -175,21 +148,24 @@ def getsimscore(data_in):
     loc_matrix = np.empty((total_file, total_file),dtype=object)
     
     for i in range(total_file):
-        tree1 = filelist[i]
-        for j in range(total_file):
-            tmp_dic1 = ast_dictionary[i].copy()
-            tmp_dic2 = ast_dictionary[j].copy()
+        tree1 =  filelist[i]
+        for j in range(i+1,total_file):
+            tmp_dic1 = [ast_dictionary[i].copy(),ast_dictionary[i].copy()]
+            tmp_dic2 = [ast_dictionary[j].copy(),ast_dictionary[j].copy()]
             loc_matrix[i,j] = []
-            result_matrix[i,j] = (compare_bfs(tmp_dic1,tmp_dic2,loc_matrix[i,j])/tree1.ast.weight)*100
-            result_matrix[i,j] = round(result_matrix[i,j], 2)
-        
+            loc_matrix[j,i] = []
+            for k in range(2):
+                if k==0:
+                    result_matrix[i,j] += (compare_bfs(tmp_dic1[k],tmp_dic2[k],loc_matrix[i,j])/tree1.ast.weight)
+                else:
+                    result_matrix[i,j] += (compare_bfs(tmp_dic2[k],tmp_dic1[k],loc_matrix[j,i])/filelist[j].ast.weight)
+            result_matrix[i,j] = round(result_matrix[i,j]*100*(1/2), 2)
     for i in range(total_file):
-        for j in range(total_file):
-            tmp = round((result_matrix[i,j] + result_matrix[j,i])/2, 2)
-            result_matrix[i,j] = tmp
-            result_matrix[j,i] = tmp
-            if i>j:
-                result_matrix[i,j] = 1000
+        for j in range(i+1):
+            if i==j:
+                result_matrix[i,j]=100
+            else:
+                result_matrix[i,j]=1000
 
     return {
         "score": result_matrix.tolist(),
@@ -213,21 +189,25 @@ def getsimscore_CSV(data_in):
     loc_matrix = np.empty((total_file, total_file),dtype=object)
     
     for i in range(total_file):
-        tree1 = filelist[i]
-        for j in range(total_file):
-            tmp_dic1 = ast_dictionary[i].copy()
-            tmp_dic2 = ast_dictionary[j].copy()
+        tree1 =  filelist[i]
+        for j in range(i+1,total_file):
+            tmp_dic1 = [ast_dictionary[i].copy(),ast_dictionary[i].copy()]
+            tmp_dic2 = [ast_dictionary[j].copy(),ast_dictionary[j].copy()]
             loc_matrix[i,j] = []
-            result_matrix[i,j] = (compare_bfs(tmp_dic1,tmp_dic2,loc_matrix[i,j])/tree1.ast.weight)*100
-            result_matrix[i,j] = round(result_matrix[i,j], 2)
-        
+            loc_matrix[j,i] = []
+            for k in range(2):
+                if k==0:
+                    result_matrix[i,j] += (compare_bfs(tmp_dic1[k],tmp_dic2[k],loc_matrix[i,j])/tree1.ast.weight)
+                else:
+                    result_matrix[i,j] += (compare_bfs(tmp_dic2[k],tmp_dic1[k],loc_matrix[j,i])/filelist[j].ast.weight)
+            result_matrix[i,j] = round(result_matrix[i,j]*100*(1/2), 2)
     for i in range(total_file):
-        for j in range(total_file):
-            tmp = round((result_matrix[i,j] + result_matrix[j,i])/2, 2)
-            result_matrix[i,j] = tmp
-            result_matrix[j,i] = tmp
-            if i>j:
-                result_matrix[i,j] = None
+        for j in range(i+1):
+            if i==j:
+                result_matrix[i,j]=100
+            else:
+                result_matrix[i,j]=None
+                
     result_df = pandas.DataFrame(result_matrix, [file.name for file in filelist], [file.name for file in filelist])
     result_df.fillna("", inplace = True)
     stream = StringIO()
