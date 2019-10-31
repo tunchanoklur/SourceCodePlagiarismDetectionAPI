@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, Response #import main Flask class and
 from functions.compare_function import getsimscore,getsimscore_CSV
 from flask_cors import CORS
 import csv
+import yaml
 
 app = Flask(__name__) #create the Flask app
 CORS(app)
@@ -17,8 +18,15 @@ def simscore_json():
         print(result)
         return jsonify(result)
     except Exception as error:
-        print("API",error)
-        return jsonify({'error': "An error occur",'error_msg':str(error)})
+        def findFile(name):
+            for x in data:
+                if(x['filename']==name):
+                    return x['fileinfo']
+            return ""
+        error_dict = yaml.load(str(error))
+        error_dict["fileinfo"] = findFile(error_dict['file'])
+        print(data[1]['filename'])
+        return jsonify({'error': "An error occur",'error_msg':error_dict})
 
 @app.route('/getsimscore_csv', methods=['POST']) #GET requests will be blocked
 def simscore_csv():

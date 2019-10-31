@@ -64,7 +64,14 @@ class PLYParser(object):
         return self._coord(p.lineno(token_idx), column)
 
     def _parse_error(self, msg, coord):
-        raise ParseError("%s: %s" % (coord, msg))
+        #raise ParseError("%s: %s" % (coord, msg))
+        raise ParseError({
+            "error_type":"Parse Error",
+            "file": coord.file,
+            "line": coord.line,
+            "msg": msg,
+            "fileinfo":""
+        })
 
 
 def parameterized(*params):
