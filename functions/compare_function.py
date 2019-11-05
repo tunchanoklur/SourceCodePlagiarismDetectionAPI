@@ -68,11 +68,29 @@ def categorize_binop(operator):
     if operator in ['&&','||']:
         return "logical"
     return "BinaryOp"
-    
+
+def categorize_unaryop(operator):
+    if operator in ['-','+']: 
+        return "unaryminusplus"
+    if operator in ['!']:
+        return "negation"
+    if operator in ['++','--','p++','p--']:
+        return "prefixincrementdecrement"
+    if operator in ['&','*']:
+        return "addressandindirect"
+    if operator in ['~']:
+        return "bitwisenegation"
+    if operator in ['sizeof']:
+        return "sizeofoperator"
+    return "UnaryOp"
+
 def recursive_postordertraversal(node,level):
     if node.__class__.__name__ is "BinaryOp":
         if node.op is not None:
             node.self_hash = hashlib.md5(categorize_binop(node.op).encode('utf-8')).hexdigest()
+    elif node.__class__.__name__ is "UnaryOp":
+        if node.op is not None:
+            node.self_hash = hashlib.md5(categorize_unaryop(node.op).encode('utf-8')).hexdigest()
     else:
         node.self_hash = hashlib.md5(node.__class__.__name__.encode('utf-8')).hexdigest()
     node.recur_hash = node.self_hash
